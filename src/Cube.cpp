@@ -1,13 +1,11 @@
-#include "Cube.hpp"
-
-Cube::Cube() {
-
+#include "Cube.hpp"  
+	
+Cube::Cube()
+{
+	
 }
-
-Cube::~Cube() {
-
-}
-
-void Cube::render() {
-
+	
+Cube::~Cube()
+{
+	
 }

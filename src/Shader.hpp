@@ -1,13 +1,15 @@
-#include <glad/glad.h>
-#include <iostream>
-#include <fstream>
-#include <string>
+#include "header.h"
 
-class Shader {
-    public:
-    Shader(const char* filename, GLenum type);
+#ifndef SHADER_H
+#define SHADER_H
+#pragma once
+
+class Shader
+{
+public:
+    Shader(const char *filename, GLenum type);
     ~Shader();
 
     GLuint shader;
-
 };
+#endif

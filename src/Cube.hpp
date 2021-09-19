@@ -1,11 +1,14 @@
+#include "header.h"
 
-#include "Shader.hpp"
+#ifndef CUBE_H
+#define CUBE_H
+#pragma once
 
-class Cube {
-    public:
-    Cube();
-    ~Cube();
-
-    void render();
-
+class Cube
+{
+private:
+public:
+	Cube();
+	~Cube();
 };
+#endif

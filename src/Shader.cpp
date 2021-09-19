@@ -45,7 +45,4 @@ Shader::Shader(const char *filename, GLenum type)
     }
 }
 
-Shader::~Shader()
-{
-    glDeleteShader(shader);
-}
+Shader::~Shader() { glDeleteShader(shader); }

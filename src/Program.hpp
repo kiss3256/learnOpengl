@@ -13,7 +13,9 @@ public:
 	Program(Shader *vertexShader, Shader *fragmentShader);
 	~Program();
 
-	inline void use() { glUseProgram(program); }
+	void use();
+
+	void setUniform(const char *uniform, float *value);
 };
 
 #endif

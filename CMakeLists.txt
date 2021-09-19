@@ -6,7 +6,7 @@ enable_testing()
 
 aux_source_directory(src SOURCE)
 
-add_compile_options(-Wall)
+# add_compile_options(-Wall)
 
 add_executable(LearnGL ${SOURCE})
 

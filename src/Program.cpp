@@ -17,7 +17,12 @@ Program::Program(Shader *vertexShader, Shader *fragmentShader)
     }
 }
 
-Program::~Program()
+Program::~Program() { glDeleteProgram(program); }
+
+void Program::use() { glUseProgram(program); }
+
+void Program::setUniform(const char *uniform, float *value)
 {
-    glDeleteProgram(program);
+    GLint location = glGetUniformLocation(program, uniform);
+    glUniformMatrix4fv(location, 1, GL_FALSE, value);
 }

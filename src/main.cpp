@@ -52,10 +52,10 @@ int main(int, char**) {
     // -------------------------------------------------------
 
     float vertices[] = {
-        0.5f, 0.5f, 0.0f,   // 右上角
-        0.5f, -0.5f, 0.0f,  // 右下角
-        -0.5f, -0.5f, 0.0f, // 左下角
-        -0.5f, 0.5f, 0.0f   // 左上角
+        0.5f, 0.5f, 0.0f,   1.0f, 0.0f, 0.0f, // 右上角
+        0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f, // 右下角
+        -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, // 左下角
+        -0.5f, 0.5f, 0.0f,  0.0f, 0.0f, 1.0f  // 左上角
     };
 
     unsigned int indices[] = { // 注意索引从0开始! 
@@ -78,8 +78,11 @@ int main(int, char**) {
 
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+   
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
 
     // -------------------------------------------------------
 
@@ -89,18 +92,11 @@ int main(int, char**) {
 
         glfwPollEvents();
 
-
         glClearColor(0.2f, 0.3f, 0.4f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        
-        float timeValue = (float)glfwGetTime();
-        float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
-        GLint location = glGetUniformLocation(program, "ourColor");
-
         glUseProgram(program);
-        glUniform4f(location, 0.0f, greenValue, 0.0f, 1.0f);
-
+        
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 

@@ -12,7 +12,11 @@ add_executable(LearnGL ${SOURCE})
 
 include_directories(include)
 
-find_library(GLFW_LIB GLFW)
+IF (CMAKE_SYSTEM_NAME MATCHES "Windows")
+    find_library(GLFW_LIB GLFW3 lib)
+ELSE ()
+    find_library(GLFW_LIB GLFW)
+ENDIF (CMAKE_SYSTEM_NAME MATCHES "Windows")
 
 target_link_libraries(LearnGL ${GLFW_LIB})
 

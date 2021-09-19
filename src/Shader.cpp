@@ -1,17 +1,31 @@
 #include "Shader.hpp"
 
 
-Shader::Shader(const char* filename, GLenum type) {
-    std::vector<char> v;
-    if (FILE *fp = fopen(filename, "r")) {
-        char buf[1024];
-        while (size_t len = fread(buf, 1, sizeof(buf), fp))
-            v.insert(v.end(), buf, buf + len);
-        v.push_back('\0');
-        fclose(fp);
-    }
+using std::cout; using std::cerr;
+using std::endl; using std::string;
+using std::ifstream; using std::ostringstream;
 
-    const char* shaderSource = v.data();
+string readFileIntoString(const string& path) {
+    ifstream input_file(path);
+    if (!input_file.is_open()) {
+        cerr << "Could not open the file - '"
+             << path << "'" << endl;
+        exit(EXIT_FAILURE);
+    }
+    return string((std::istreambuf_iterator<char>(input_file)), std::istreambuf_iterator<char>());
+}
+
+
+Shader::Shader(const char* filename, GLenum type) {
+    std::string w_filename = filename;
+    #ifdef  WIN32
+    w_filename = "../" + w_filename;
+    #endif  //WIN32  
+    
+    string file_contents;
+    file_contents = readFileIntoString(w_filename);
+
+    const char* shaderSource = file_contents.c_str();
     shader = glCreateShader(type);
     glShaderSource(shader, 1, &shaderSource, NULL);
 

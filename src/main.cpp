@@ -3,11 +3,23 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+static void error_callback(int error, const char *description)
+{
+    fprintf(stderr, "Error: %s\n", description);
+}
+
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 
+void calcFPS(GLFWwindow *window);
+
 int scrWidth = 800;
 int scrHeight = 600;
+
+int frameNum = 0;
+double lastTime = 0;
+
+const std::string winTitle("LearnOpenGL");
 
 int main(int, char **)
 {
@@ -21,7 +33,7 @@ int main(int, char **)
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-    GLFWwindow *window = glfwCreateWindow(scrWidth, scrHeight, "LearnOpenGL", NULL, NULL);
+    GLFWwindow *window = glfwCreateWindow(scrWidth, scrHeight, winTitle.c_str(), NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -30,10 +42,12 @@ int main(int, char **)
     }
     glfwMakeContextCurrent(window);
 
+    glfwSetErrorCallback(error_callback);
     glfwSetKeyCallback(window, key_callback);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     gladLoadGL();
+    glfwSwapInterval(1);
 
     // -------------------------------------------------------
 
@@ -136,6 +150,7 @@ int main(int, char **)
     {
 
         glfwPollEvents();
+        calcFPS(window);
 
         glClearColor(0.2f, 0.3f, 0.4f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -181,4 +196,21 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
     scrWidth = width;
     scrHeight = height;
     glViewport(0, 0, width, height);
+}
+
+void calcFPS(GLFWwindow *window)
+{
+    if (frameNum == 60)
+    {
+        auto currentTime = glfwGetTime();
+        auto elapsedTime = currentTime - lastTime;
+        lastTime = currentTime;
+        auto fps = std::to_string(frameNum / elapsedTime);
+        std::string newTitle = winTitle + "( FPS = " + fps + " )";
+        glfwSetWindowTitle(window, newTitle.c_str());
+
+        frameNum = 0;
+    }
+
+    frameNum++;
 }

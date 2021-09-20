@@ -5,6 +5,7 @@ using std::cout;
 using std::endl;
 using std::ifstream;
 using std::ostringstream;
+using std::size_t;
 using std::string;
 
 string readFileIntoString(const string &path)
@@ -19,12 +20,22 @@ string readFileIntoString(const string &path)
     return string((std::istreambuf_iterator<char>(input_file)), std::istreambuf_iterator<char>());
 }
 
-Shader::Shader(std::string filename, GLenum type)
+Shader::Shader(string filename)
 {
     string file_contents;
     file_contents = readFileIntoString(filename);
-
     const char *shaderSource = file_contents.c_str();
+
+    GLenum type;
+    size_t found;
+    found = filename.find(".vs");
+    if (found != string::npos)
+        type = GL_VERTEX_SHADER;
+
+    found = filename.find(".fs");
+    if (found != string::npos)
+        type = GL_FRAGMENT_SHADER;
+
     shader = glCreateShader(type);
     glShaderSource(shader, 1, &shaderSource, NULL);
 

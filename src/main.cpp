@@ -51,8 +51,8 @@ int main(int, char **)
 
     // -------------------------------------------------------
 
-    Shader *vertexShader = new Shader(AssetsLoader("cube.vs").getPath(), GL_VERTEX_SHADER);
-    Shader *fragmentShader = new Shader(AssetsLoader("cube.fs").getPath(), GL_FRAGMENT_SHADER);
+    Shader *vertexShader = new Shader(AssetsLoader("cube.vs").getPath());
+    Shader *fragmentShader = new Shader(AssetsLoader("cube.fs").getPath());
     Program *program = new Program(vertexShader, fragmentShader);
 
     // -------------------------------------------------------

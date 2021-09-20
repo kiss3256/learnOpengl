@@ -41,7 +41,7 @@ Shader::Shader(const char *filename, GLenum type)
     {
         GLchar infoLog[512];
         glGetShaderInfoLog(shader, 512, nullptr, infoLog);
-        std::cout << infoLog << std::endl;
+        std::cout << "ERROR::SHADER_COMPILE::" << infoLog << std::endl;
     }
 }
 

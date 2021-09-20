@@ -51,8 +51,8 @@ int main(int, char **)
 
     // -------------------------------------------------------
 
-    Shader *vertexShader = new Shader("../assets/cube.vs", GL_VERTEX_SHADER);
-    Shader *fragmentShader = new Shader("../assets/cube.fs", GL_FRAGMENT_SHADER);
+    Shader *vertexShader = new Shader(AssetsLoader("cube.vs").getPath(), GL_VERTEX_SHADER);
+    Shader *fragmentShader = new Shader(AssetsLoader("cube.fs").getPath(), GL_FRAGMENT_SHADER);
     Program *program = new Program(vertexShader, fragmentShader);
 
     // -------------------------------------------------------
@@ -121,7 +121,7 @@ int main(int, char **)
 
     int width, height, nrChannels;
     // stbi_set_flip_vertically_on_load(true);
-    unsigned char *data = stbi_load("../../assets/wall.jpg", &width, &height, &nrChannels, 0);
+    unsigned char *data = stbi_load(AssetsLoader("wall.jpg").getPath().c_str(), &width, &height, &nrChannels, 0);
 
     if (data)
     {
@@ -202,10 +202,10 @@ void calcFPS(GLFWwindow *window)
 {
     if (frameNum == 60)
     {
-        auto currentTime = glfwGetTime();
-        auto elapsedTime = currentTime - lastTime;
+        double currentTime = glfwGetTime();
+        double elapsedTime = currentTime - lastTime;
         lastTime = currentTime;
-        auto fps = std::to_string(frameNum / elapsedTime);
+        std::string fps = std::to_string(frameNum / elapsedTime);
         std::string newTitle = winTitle + "( FPS = " + fps + " )";
         glfwSetWindowTitle(window, newTitle.c_str());
 

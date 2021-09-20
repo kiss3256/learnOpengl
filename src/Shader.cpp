@@ -19,15 +19,10 @@ string readFileIntoString(const string &path)
     return string((std::istreambuf_iterator<char>(input_file)), std::istreambuf_iterator<char>());
 }
 
-Shader::Shader(const char *filename, GLenum type)
+Shader::Shader(std::string filename, GLenum type)
 {
-    std::string w_filename = filename;
-#ifdef WIN32
-    w_filename = "../" + w_filename;
-#endif //WIN32
-
     string file_contents;
-    file_contents = readFileIntoString(w_filename);
+    file_contents = readFileIntoString(filename);
 
     const char *shaderSource = file_contents.c_str();
     shader = glCreateShader(type);

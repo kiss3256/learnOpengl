@@ -7,7 +7,7 @@
 class Shader
 {
 public:
-    Shader(const char *filename, GLenum type);
+    Shader(std::string filename, GLenum type);
     ~Shader();
 
     GLuint shader;

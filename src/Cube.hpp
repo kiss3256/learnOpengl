@@ -7,8 +7,13 @@
 class Cube
 {
 private:
+	GLuint VAO, VBO;
+	GLuint texture;
+
 public:
-	Cube();
+	Cube(const char *textureName);
 	~Cube();
+
+	void render();
 };
 #endif

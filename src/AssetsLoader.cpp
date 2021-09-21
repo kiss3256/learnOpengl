@@ -12,7 +12,7 @@ AssetsLoader::~AssetsLoader()
 string AssetsLoader::getPath()
 {
     string prefix;
-#ifdef WIN32
+#ifdef _WIN32
     prefix.assign("../../assets/");
 #else
     prefix.assign("../assets/");

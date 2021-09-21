@@ -87,6 +87,12 @@ Cube::Cube(const char *textureName)
         std::cout << "ERROR::Failed to load texture." << std::endl;
     }
     stbi_image_free(data);
+
+    // ------------------------------------------------------------------------------------
+
+    Shader *vertexShader = new Shader(AssetsLoader("cube.vs").getPath());
+    Shader *fragmentShader = new Shader(AssetsLoader("cube.fs").getPath());
+    program = new Program(vertexShader, fragmentShader);
 }
 
 Cube::~Cube()
@@ -96,8 +102,24 @@ Cube::~Cube()
     glDeleteBuffers(1, &VBO);
 }
 
-void Cube::render()
+void Cube::render(Camera *camera)
 {
+
+    glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+    glm::mat4 view = glm::mat4(1.0f);
+    glm::mat4 projection = glm::mat4(1.0f);
+    model = glm::scale(model, scale);
+    model = glm::rotate(model, rotation.x, vec3(1.0f, 0.0f, 0.0f));
+    model = glm::rotate(model, rotation.y, vec3(0.0f, 1.0f, 0.0f));
+    model = glm::rotate(model, rotation.z, vec3(0.0f, 0.0f, 1.0f));
+    model = glm::translate(model, location);
+    program->setUniform("model", glm::value_ptr(model));
+    program->setUniform("view", glm::value_ptr(camera->getViewMatrix()));
+    program->setUniform("projection", glm::value_ptr(camera->getProjectionMatrix()));
+
+    // program->setUniform("ourTexture", 0);
+
+    program->use();
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture);

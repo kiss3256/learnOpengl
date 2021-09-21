@@ -18,6 +18,9 @@
 #include "AssetsLoader.hpp"
 #include "Shader.hpp"
 #include "Program.hpp"
+#include "Actor.hpp"
+#include "Camera.hpp"
 #include "Cube.hpp"
+#include "ObjectManager.hpp"
 
 #endif

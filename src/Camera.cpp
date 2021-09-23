@@ -1,16 +1,12 @@
 #include "Camera.hpp"
 
-Camera::Camera(GLFWwindow *window_ptr, glm::vec3 &position, glm::vec3 &target)
+Camera::Camera(GLFWwindow *window_ptr)
 {
-
     window = window_ptr;
-    location = position;
-    direction = target;
 
-    std::cout << "LOG::Camera created." << std::endl;
-
-    std::cout << "LOG::Camera location: ( " << location.x << ", " << location.y << ", " << location.z << " )." << std::endl;
-    std::cout << "LOG::Camera rotation: ( " << rotation.x << ", " << rotation.y << ", " << rotation.z << " )." << std::endl;
+    cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+    cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+    cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 }
 
 Camera::~Camera()
@@ -19,7 +15,9 @@ Camera::~Camera()
 
 glm::mat4 Camera::getViewMatrix()
 {
-    return glm::lookAt(location, direction, glm::vec3(0.0f, 1.0f, 0.0f));
+    glm::mat4 view;
+    view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+    return view;
 }
 
 glm::mat4 Camera::getProjectionMatrix()
@@ -29,17 +27,22 @@ glm::mat4 Camera::getProjectionMatrix()
     return glm::perspective(glm::radians(45.0f), (float)scrWidth / (float)scrHeight, 0.1f, 100.0f);
 }
 
-void Camera::moveForward(float value)
+float deltaTime = 0.0f;
+float lastFrame = 0.0f;
+
+void Camera::processInput()
 {
-    location.z += value;
-    direction.z += value;
+    float currentFrame = glfwGetTime();
+    deltaTime = currentFrame - lastFrame;
+    lastFrame = currentFrame;
+
+    float cameraSpeed = 2.5f * deltaTime;
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        cameraPos += cameraSpeed * cameraFront;
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        cameraPos -= cameraSpeed * cameraFront;
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
 }
-
-// void Camera::moveRight(float value)
-// {
-//     location.x += value;
-//     direction.x += value;
-
-//     std::cout << "LOG::Camera location: ( " << location.x << ", " << location.y << ", " << location.z << " )." << std::endl;
-//     std::cout << "LOG::Camera direction: ( " << direction.x << ", " << direction.y << ", " << direction.z << " )." << std::endl;
-// }

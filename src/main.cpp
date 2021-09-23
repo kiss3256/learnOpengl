@@ -55,15 +55,11 @@ int main(int, char **)
     glfwSwapInterval(1);
 
     // ----------------------------------------------------------------------
-
-    glm::vec3 position = glm::vec3(0.0f, 0.0f, -30.0f);
-    glm::vec3 target = glm::vec3(0.0f, 0.0f, 0.0f);
-
-    mainCamera = new Camera(window, position, target);
+    mainCamera = new Camera(window);
     cube1 = new Cube("wall.jpg");
     // cube2 = new Cube("container.jpg");
 
-    cube1->setLocation(glm::vec3(10.0f, 10.0f, 10.0f));
+    // cube1->setLocation(glm::vec3(10.0f, 10.0f, 10.0f));
     // cube1->setScale(glm::vec3(1.2f, 0.4f, 0.6f));
     // cube1->setRotation(glm::vec3(0.0f, -10.0f, 0.0f));
     // cube2->setRotation(glm::vec3(20.0f, 45.0f, 360.0f));
@@ -80,6 +76,8 @@ int main(int, char **)
 
         glClearColor(0.2f, 0.3f, 0.4f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        mainCamera->processInput();
 
         cube1->render(mainCamera);
         // cube2->render(mainCamera);
@@ -101,19 +99,6 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GLFW_TRUE);
-
-    if (key == GLFW_KEY_W && (action == GLFW_PRESS || action == GLFW_REPEAT))
-        cube1->moveForward(1.0f);
-    if (key == GLFW_KEY_S && (action == GLFW_PRESS || action == GLFW_REPEAT))
-        cube1->moveForward(-1.0f);
-    if (key == GLFW_KEY_D && (action == GLFW_PRESS || action == GLFW_REPEAT))
-        cube1->moveRight(1.0f);
-    if (key == GLFW_KEY_A && (action == GLFW_PRESS || action == GLFW_REPEAT))
-        cube1->moveRight(-1.0f);
-    if (key == GLFW_KEY_E && (action == GLFW_PRESS || action == GLFW_REPEAT))
-        cube1->moveUp(1.0f);
-    if (key == GLFW_KEY_Q && (action == GLFW_PRESS || action == GLFW_REPEAT))
-        cube1->moveUp(-1.0f);
 }
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)

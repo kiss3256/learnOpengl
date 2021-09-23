@@ -7,19 +7,20 @@
 class Camera : public Actor
 {
 private:
-	glm::vec3 location;
-	glm::vec3 direction;
 	GLFWwindow *window;
 
+	glm::vec3 cameraPos;
+	glm::vec3 cameraFront;
+	glm::vec3 cameraUp;
+
 public:
-	Camera(GLFWwindow *window, glm::vec3 &position, glm::vec3 &target);
+	Camera(GLFWwindow *window);
 	~Camera();
 
 	glm::mat4 getViewMatrix();
 	glm::mat4 getProjectionMatrix();
 
-	void moveForward(float value);
-	// void moveRight(float value);
+	void processInput();
 };
 
 #endif

@@ -9,12 +9,12 @@ class Camera : public Actor
 private:
 	GLFWwindow *window;
 
+public:
 	glm::vec3 cameraPos;
 	glm::vec3 cameraFront;
 	glm::vec3 cameraUp;
 
-public:
-	Camera(GLFWwindow *window);
+	Camera(GLFWwindow *window_ptr);
 	~Camera();
 
 	glm::mat4 getViewMatrix();

@@ -4,24 +4,24 @@ static void error_callback(int error, const char *description)
 {
     fprintf(stderr, "Error: %s\n", description);
 }
-
-void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
-void mouse_button_callback(GLFWwindow *window, int button, int action, int mods);
-void framebuffer_size_callback(GLFWwindow *window, int width, int height);
-
-void calcFPS(GLFWwindow *window);
+static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
+static void mouse_button_callback(GLFWwindow *window, int button, int action, int mods);
+static void framebuffer_size_callback(GLFWwindow *window, int width, int height);
+static void mouse_callback(GLFWwindow *window, double xpos, double ypos);
+static void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
+static void calcFPS(GLFWwindow *window);
 
 int scrWidth = 800;
 int scrHeight = 600;
-
-bool canMove = false;
 
 int frameNum = 0;
 double lastTime = 0;
 
 Camera *mainCamera;
-Cube *cube1;
-Cube *cube2;
+
+double lastX = 400, lastY = 300;
+bool firstMouse = true;
+double yaw = 0, pitch = 0;
 
 const std::string winTitle("LearnOpenGL");
 
@@ -45,9 +45,12 @@ int main(int, char **)
         return -1;
     }
     glfwMakeContextCurrent(window);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     glfwSetErrorCallback(error_callback);
     glfwSetKeyCallback(window, key_callback);
+    glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetScrollCallback(window, scroll_callback);
     glfwSetMouseButtonCallback(window, mouse_button_callback);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
@@ -55,14 +58,9 @@ int main(int, char **)
     glfwSwapInterval(1);
 
     // ----------------------------------------------------------------------
-    mainCamera = new Camera(window);
-    cube1 = new Cube("wall.jpg");
-    // cube2 = new Cube("container.jpg");
 
-    // cube1->setLocation(glm::vec3(10.0f, 10.0f, 10.0f));
-    // cube1->setScale(glm::vec3(1.2f, 0.4f, 0.6f));
-    // cube1->setRotation(glm::vec3(0.0f, -10.0f, 0.0f));
-    // cube2->setRotation(glm::vec3(20.0f, 45.0f, 360.0f));
+    mainCamera = new Camera(window);
+    Cube *cube1 = new Cube("wall.jpg");
 
     // ----------------------------------------------------------------------
 
@@ -90,9 +88,47 @@ int main(int, char **)
     return 0;
 }
 
+void mouse_callback(GLFWwindow *window, double xpos, double ypos)
+{
+    if (firstMouse)
+    {
+        lastX = xpos;
+        lastY = ypos;
+        fprintf(stdout, "x: %g, y: %g\n", xpos, ypos);
+        firstMouse = false;
+    }
+
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos;
+    lastX = xpos;
+    lastY = ypos;
+
+    float sensitivity = 0.05f;
+    xoffset *= sensitivity;
+    yoffset *= sensitivity;
+
+    yaw += xoffset;
+    pitch += yoffset;
+
+    if (pitch > 89.0f)
+        pitch = 89.0f;
+    if (pitch < -89.0f)
+        pitch = -89.0f;
+
+    glm::vec3 front;
+    front.x = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+    front.y = sin(glm::radians(pitch));
+    front.z = -cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    mainCamera->cameraFront = glm::normalize(front);
+    fprintf(stdout, "front:: (%f, %f, %f)\n", front.x, front.y, front.z);
+}
+
+void scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
+{
+}
+
 void mouse_button_callback(GLFWwindow *window, int button, int action, int mods)
 {
-    canMove = (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_REPEAT);
 }
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)

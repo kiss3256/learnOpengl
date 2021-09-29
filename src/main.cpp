@@ -62,12 +62,13 @@ int main(int, char **)
     mainCamera = new Camera(window);
     Cube *box = new Cube("wall.jpg");
     Cube *light = new Cube;
+    glm::vec3 lightPos = glm::vec3(4.0f, 4.0f, 4.0f);
+    // program->setUniform("lightPos", lightPos);
+    box->program->setUniform("lightPos", lightPos);
 
     Shader *vertexShader = new Shader(AssetsLoader("light.vs").getPath());
     Shader *fragmentShader = new Shader(AssetsLoader("light.fs").getPath());
     Program *program = new Program(vertexShader, fragmentShader);
-    glm::vec3 lightPos = glm::vec3(4.0f, 4.0f, 4.0f);
-    program->setUniform("lightPos", lightPos);
     light->setProgram(program);
     light->setScale(0.2f);
     light->setLocation(lightPos);
@@ -81,15 +82,13 @@ int main(int, char **)
 
         glfwPollEvents();
         calcFPS(window);
+        mainCamera->processInput();
 
         glClearColor(0.2f, 0.3f, 0.4f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        mainCamera->processInput();
-
         box->render(mainCamera);
         light->render(mainCamera);
-        // cube2->render(mainCamera);
 
         glfwSwapBuffers(window);
     }

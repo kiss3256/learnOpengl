@@ -10,9 +10,9 @@ private:
 	GLuint VAO, VBO;
 	GLuint texture;
 
+public:
 	Program *program;
 
-public:
 	Cube(){};
 	Cube(const char *textureName);
 	~Cube();

@@ -32,7 +32,7 @@ float lastFrame = 0.0f;
 
 void Camera::processInput()
 {
-    float currentFrame = glfwGetTime();
+    float currentFrame = (float)glfwGetTime();
     deltaTime = currentFrame - lastFrame;
     lastFrame = currentFrame;
 

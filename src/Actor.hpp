@@ -11,7 +11,7 @@ class Actor
 private:
 public:
 	Actor();
-	~Actor();
+	virtual ~Actor();
 
 	vec3 location;
 	vec3 rotation;
@@ -20,8 +20,7 @@ public:
 	void setLocation(const glm::vec3 &location) { this->location = location; };
 	void setRotation(const glm::vec3 &rotation) { this->rotation = rotation; };
 	void setScale(const glm::vec3 &scale) { this->scale = scale; };
-
-	// virtual void render() = 0;
+	void setScale(const float scale) { this->scale *= scale; };
 
 	void moveForward(float value);
 	void moveRight(float value);

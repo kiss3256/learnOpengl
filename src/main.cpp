@@ -60,7 +60,15 @@ int main(int, char **)
     // ----------------------------------------------------------------------
 
     mainCamera = new Camera(window);
-    Cube *cube1 = new Cube("wall.jpg");
+    Cube *box = new Cube("wall.jpg");
+    Cube *light = new Cube;
+
+    Shader *vertexShader = new Shader(AssetsLoader("light.vs").getPath());
+    Shader *fragmentShader = new Shader(AssetsLoader("light.fs").getPath());
+    Program *program = new Program(vertexShader, fragmentShader);
+    light->setProgram(program);
+    light->setScale(0.2f);
+    light->setLocation(glm::vec3(6.0f, 6.0f, 6.0f));
 
     // ----------------------------------------------------------------------
 
@@ -77,7 +85,8 @@ int main(int, char **)
 
         mainCamera->processInput();
 
-        cube1->render(mainCamera);
+        box->render(mainCamera);
+        light->render(mainCamera);
         // cube2->render(mainCamera);
 
         glfwSwapBuffers(window);
@@ -94,12 +103,11 @@ void mouse_callback(GLFWwindow *window, double xpos, double ypos)
     {
         lastX = xpos;
         lastY = ypos;
-        fprintf(stdout, "x: %g, y: %g\n", xpos, ypos);
         firstMouse = false;
     }
 
-    float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos;
+    float xoffset = (float)(xpos - lastX);
+    float yoffset = (float)(lastY - ypos);
     lastX = xpos;
     lastY = ypos;
 
@@ -116,11 +124,11 @@ void mouse_callback(GLFWwindow *window, double xpos, double ypos)
         pitch = -89.0f;
 
     glm::vec3 front;
-    front.x = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-    front.y = sin(glm::radians(pitch));
-    front.z = -cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    front.x = (float)sin(glm::radians(yaw));
+    front.y = (float)sin(glm::radians(pitch));
+    front.z = -(float)cos(glm::radians(yaw)) * (float)cos(glm::radians(pitch));
     mainCamera->cameraFront = glm::normalize(front);
-    fprintf(stdout, "front:: (%f, %f, %f)\n", front.x, front.y, front.z);
+    fprintf(stdout, "front::(%f, %f, %f)\n", front.x, front.y, front.z);
 }
 
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset)

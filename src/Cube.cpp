@@ -113,13 +113,11 @@ void Cube::render(Camera *camera)
     model = glm::rotate(model, rotation.y, vec3(0.0f, 1.0f, 0.0f));
     model = glm::rotate(model, rotation.z, vec3(0.0f, 0.0f, 1.0f));
     model = glm::translate(model, location);
+
+    program->use();
     program->setUniform("model", glm::value_ptr(model));
     program->setUniform("view", glm::value_ptr(camera->getViewMatrix()));
     program->setUniform("projection", glm::value_ptr(camera->getProjectionMatrix()));
-
-    // program->setUniform("ourTexture", 0);
-
-    program->use();
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture);

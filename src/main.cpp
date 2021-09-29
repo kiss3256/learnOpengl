@@ -66,9 +66,11 @@ int main(int, char **)
     Shader *vertexShader = new Shader(AssetsLoader("light.vs").getPath());
     Shader *fragmentShader = new Shader(AssetsLoader("light.fs").getPath());
     Program *program = new Program(vertexShader, fragmentShader);
+    glm::vec3 lightPos = glm::vec3(4.0f, 4.0f, 4.0f);
+    program->setUniform("lightPos", lightPos);
     light->setProgram(program);
     light->setScale(0.2f);
-    light->setLocation(glm::vec3(6.0f, 6.0f, 6.0f));
+    light->setLocation(lightPos);
 
     // ----------------------------------------------------------------------
 
@@ -128,7 +130,7 @@ void mouse_callback(GLFWwindow *window, double xpos, double ypos)
     front.y = (float)sin(glm::radians(pitch));
     front.z = -(float)cos(glm::radians(yaw)) * (float)cos(glm::radians(pitch));
     mainCamera->cameraFront = glm::normalize(front);
-    fprintf(stdout, "front::(%f, %f, %f)\n", front.x, front.y, front.z);
+    // fprintf(stdout, "front::(%f, %f, %f)\n", front.x, front.y, front.z);
 }
 
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset)

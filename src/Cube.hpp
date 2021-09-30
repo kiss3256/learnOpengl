@@ -8,16 +8,19 @@ class Cube : public Actor
 {
 private:
 	GLuint VAO, VBO;
-	GLuint texture;
+	GLuint diffuseMap;
+	GLuint specularMap;
 
 public:
 	Program *program;
 
-	Cube(const char *textureName);
+	Cube();
+	Cube(const char *texture);
+	Cube(const char *diffuse, const char *specular);
 	~Cube();
 
 	void render(Camera *camera);
 
-	void setProgram(Program *program) { this->program = program; };
+	void setProgram(Program *newProgram);
 };
 #endif

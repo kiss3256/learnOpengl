@@ -95,8 +95,8 @@ int main(int, char **)
         pitch = (double)std::stof(tokens[12]);
     }
 
-    Cube *box = new Cube("wall.jpg");
-    Cube *light = new Cube("Wall.jpg");
+    Cube *box = new Cube("container2.png", "container2_specular.png");
+    Cube *light = new Cube();
     glm::vec3 lightPos = glm::vec3(4.0f, 4.0f, 4.0f);
     Shader *vertexShader = new Shader(AssetsLoader("light.vs").getPath());
     Shader *fragmentShader = new Shader(AssetsLoader("light.fs").getPath());
@@ -104,15 +104,6 @@ int main(int, char **)
     light->setProgram(program);
     light->setScale(0.2f);
     light->setLocation(lightPos);
-    box->program->setUniform("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
-    box->program->setUniform("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
-    box->program->setUniform("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
-    box->program->setUniform("material.shininess", 32.0f);
-
-    box->program->setUniform("light.position", lightPos);
-    box->program->setUniform("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
-    box->program->setUniform("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
-    box->program->setUniform("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
 
     // ----------------------------------------------------------------------
 
@@ -125,8 +116,17 @@ int main(int, char **)
         calcFPS(window);
         mainCamera->processInput();
 
-        glClearColor(0.2f, 0.3f, 0.4f, 1.0f);
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        box->program->setUniform("material.diffuse", 0);
+        box->program->setUniform("material.specular", 1);
+        box->program->setUniform("material.shininess", 64.0f);
+
+        box->program->setUniform("light.position", lightPos);
+        box->program->setUniform("light.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
+        box->program->setUniform("light.diffuse", glm::vec3(0.2f, 0.2f, 0.2f));
+        box->program->setUniform("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
 
         light->render(mainCamera);
         box->program->setUniform("viewPos", mainCamera->cameraPos);

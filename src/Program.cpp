@@ -17,7 +17,11 @@ Program::Program(Shader *vertexShader, Shader *fragmentShader)
     }
 }
 
-Program::~Program() { glDeleteProgram(program); }
+Program::~Program()
+{
+    std::cout << "LOG::Program deleted.\n";
+    glDeleteProgram(program);
+}
 
 void Program::use() { glUseProgram(program); }
 
@@ -40,4 +44,11 @@ void Program::setUniform(const char *uniform, float value)
     glUseProgram(program);
     GLint location = glGetUniformLocation(program, uniform);
     glUniform1f(location, value);
+}
+
+void Program::setUniform(const char *uniform, int value)
+{
+    glUseProgram(program);
+    GLint location = glGetUniformLocation(program, uniform);
+    glUniform1i(location, value);
 }

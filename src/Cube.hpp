@@ -13,7 +13,6 @@ private:
 public:
 	Program *program;
 
-	Cube(){};
 	Cube(const char *textureName);
 	~Cube();
 

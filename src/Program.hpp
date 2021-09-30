@@ -17,6 +17,7 @@ public:
 
 	void setUniform(const char *uniform, const float *value);
 	void setUniform(const char *uniform, glm::vec3 value);
+	void setUniform(const char *uniform, float value);
 };
 
 #endif

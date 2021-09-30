@@ -34,3 +34,10 @@ void Program::setUniform(const char *uniform, glm::vec3 value)
     GLint location = glGetUniformLocation(program, uniform);
     glUniform3f(location, value.x, value.y, value.z);
 }
+
+void Program::setUniform(const char *uniform, float value)
+{
+    glUseProgram(program);
+    GLint location = glGetUniformLocation(program, uniform);
+    glUniform1f(location, value);
+}

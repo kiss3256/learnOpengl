@@ -60,18 +60,59 @@ int main(int, char **)
     // ----------------------------------------------------------------------
 
     mainCamera = new Camera(window);
-    Cube *box = new Cube("wall.jpg");
-    Cube *light = new Cube;
-    glm::vec3 lightPos = glm::vec3(4.0f, 4.0f, 4.0f);
-    // program->setUniform("lightPos", lightPos);
-    box->program->setUniform("lightPos", lightPos);
 
+    std::ifstream in("data.txt", std::ios::in);
+    if (in.is_open())
+    {
+        std::string data;
+        std::getline(in, data);
+
+        char delimiter = ',';
+        std::vector<std::string> tokens;
+        std::string token;
+        std::istringstream tokenStream(data);
+        while (std::getline(tokenStream, token, delimiter))
+        {
+            tokens.push_back(token);
+        }
+        glm::vec3 position, front, up;
+        position.x = std::stof(tokens[0]);
+        position.y = std::stof(tokens[1]);
+        position.z = std::stof(tokens[2]);
+        front.x = std::stof(tokens[3]);
+        front.y = std::stof(tokens[4]);
+        front.z = std::stof(tokens[5]);
+        up.x = std::stof(tokens[6]);
+        up.y = std::stof(tokens[7]);
+        up.z = std::stof(tokens[8]);
+        mainCamera->cameraPos = position;
+        mainCamera->cameraFront = front;
+        mainCamera->cameraUp = up;
+        // firstMouse = false;
+        // lastX = std::stof(tokens[9]);
+        // lastY = std::stof(tokens[10]);
+        yaw = (double)std::stof(tokens[11]);
+        pitch = (double)std::stof(tokens[12]);
+    }
+
+    Cube *box = new Cube("wall.jpg");
+    Cube *light = new Cube("Wall.jpg");
+    glm::vec3 lightPos = glm::vec3(4.0f, 4.0f, 4.0f);
     Shader *vertexShader = new Shader(AssetsLoader("light.vs").getPath());
     Shader *fragmentShader = new Shader(AssetsLoader("light.fs").getPath());
     Program *program = new Program(vertexShader, fragmentShader);
     light->setProgram(program);
     light->setScale(0.2f);
     light->setLocation(lightPos);
+    box->program->setUniform("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
+    box->program->setUniform("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
+    box->program->setUniform("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
+    box->program->setUniform("material.shininess", 32.0f);
+
+    box->program->setUniform("light.position", lightPos);
+    box->program->setUniform("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+    box->program->setUniform("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+    box->program->setUniform("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
 
     // ----------------------------------------------------------------------
 
@@ -87,9 +128,9 @@ int main(int, char **)
         glClearColor(0.2f, 0.3f, 0.4f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        light->render(mainCamera);
         box->program->setUniform("viewPos", mainCamera->cameraPos);
         box->render(mainCamera);
-        light->render(mainCamera);
 
         glfwSwapBuffers(window);
     }
@@ -144,7 +185,19 @@ void mouse_button_callback(GLFWwindow *window, int button, int action, int mods)
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    {
         glfwSetWindowShouldClose(window, GLFW_TRUE);
+        std::ofstream out("data.txt");
+        glm::vec3 pos = (mainCamera->cameraPos);
+        glm::vec3 front = (mainCamera->cameraFront);
+        glm::vec3 up = (mainCamera->cameraUp);
+        // fprintf(stdout, "%f,%f,%f\n", pos.x, pos.y, pos.z);
+        out << pos.x << "," << pos.y << "," << pos.z << ","
+            << front.x << "," << front.y << "," << front.z << ","
+            << up.x << "," << up.y << "," << up.z << ","
+            << lastX << "," << lastY << "," << yaw << "," << pitch;
+        out.close();
+    }
 }
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)

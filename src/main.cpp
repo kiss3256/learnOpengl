@@ -1,15 +1,16 @@
 #include "header.h"
 
-static void error_callback(int error, const char *description)
+void error_callback(int error, const char *description)
 {
     fprintf(stderr, "Error: %s\n", description);
 }
-static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
-static void mouse_button_callback(GLFWwindow *window, int button, int action, int mods);
-static void framebuffer_size_callback(GLFWwindow *window, int width, int height);
-static void mouse_callback(GLFWwindow *window, double xpos, double ypos);
-static void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
-static void calcFPS(GLFWwindow *window);
+void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
+void mouse_button_callback(GLFWwindow *window, int button, int action, int mods);
+void framebuffer_size_callback(GLFWwindow *window, int width, int height);
+void mouse_callback(GLFWwindow *window, double xpos, double ypos);
+void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
+void calcFPS(GLFWwindow *window);
+void drawGround();
 
 int scrWidth = 800;
 int scrHeight = 600;
@@ -97,7 +98,7 @@ int main(int, char **)
 
     Cube *box = new Cube("container2.png", "container2_specular.png");
     Cube *light = new Cube(nullptr, nullptr);
-    glm::vec3 lightPos = glm::vec3(4.0f, 4.0f, 4.0f);
+    glm::vec3 lightPos = glm::vec3(4.0f, 4.0f, -4.0f);
     Shader *vertexShader = new Shader(AssetsLoader("light.vs").getPath());
     Shader *fragmentShader = new Shader(AssetsLoader("light.fs").getPath());
     Program *program = new Program(vertexShader, fragmentShader);
@@ -109,6 +110,8 @@ int main(int, char **)
 
     glEnable(GL_DEPTH_TEST);
 
+    Ground ground;
+
     while (!glfwWindowShouldClose(window))
     {
 
@@ -118,6 +121,8 @@ int main(int, char **)
 
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        ground.draw(mainCamera);
 
         box->program->setUniform("material.diffuse", 0);
         box->program->setUniform("material.specular", 1);

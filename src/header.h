@@ -24,6 +24,7 @@
 #include "Actor.hpp"
 #include "Camera.hpp"
 #include "Cube.hpp"
+#include "Ground.hpp"
 #include "ObjectManager.hpp"
 
 #endif

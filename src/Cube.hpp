@@ -14,11 +14,10 @@ private:
 public:
 	Program *program;
 
-	Cube();
-	Cube(const char *texture);
 	Cube(const char *diffuse, const char *specular);
 	~Cube();
 
+	void loadModel();
 	void render(Camera *camera);
 
 	void setProgram(Program *newProgram);

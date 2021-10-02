@@ -81,77 +81,15 @@ void loadTexture(const char *textureName, GLuint *texture)
     stbi_image_free(data);
 }
 
-Cube::Cube()
-{
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
-
-    glGenBuffers(1, &VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
-    glEnableVertexAttribArray(0);
-}
-
-Cube::Cube(const char *textureName)
-{
-
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
-
-    glGenBuffers(1, &VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
-    glEnableVertexAttribArray(0);
-
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float)));
-    glEnableVertexAttribArray(2);
-
-    // ------------------------------------------------------------------------------------
-
-    loadTexture(textureName, &diffuseMap);
-
-    // ------------------------------------------------------------------------------------
-
-    Shader *vertexShader = new Shader(AssetsLoader("cube.vs").getPath());
-    Shader *fragmentShader = new Shader(AssetsLoader("cube.fs").getPath());
-    program = new Program(vertexShader, fragmentShader);
-}
-
 Cube::Cube(const char *diffuse, const char *specular)
 {
 
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
+    loadModel();
 
-    glGenBuffers(1, &VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
-    glEnableVertexAttribArray(0);
-
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float)));
-    glEnableVertexAttribArray(2);
-
-    // ------------------------------------------------------------------------------------
-
-    loadTexture(diffuse, &diffuseMap);
-    loadTexture(specular, &specularMap);
-
-    // ------------------------------------------------------------------------------------
+    if (diffuse)
+        loadTexture(diffuse, &diffuseMap);
+    if (specular)
+        loadTexture(specular, &specularMap);
 
     Shader *vertexShader = new Shader(AssetsLoader("cube.vs").getPath());
     Shader *fragmentShader = new Shader(AssetsLoader("cube.fs").getPath());
@@ -162,6 +100,26 @@ Cube::~Cube()
 {
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
+}
+
+void Cube::loadModel()
+{
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
+
+    glGenBuffers(1, &VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
 }
 
 void Cube::render(Camera *camera)

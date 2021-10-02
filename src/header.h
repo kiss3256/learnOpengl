@@ -6,6 +6,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <initializer_list>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>

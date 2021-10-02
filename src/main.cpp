@@ -96,7 +96,7 @@ int main(int, char **)
     }
 
     Cube *box = new Cube("container2.png", "container2_specular.png");
-    Cube *light = new Cube();
+    Cube *light = new Cube(nullptr, nullptr);
     glm::vec3 lightPos = glm::vec3(4.0f, 4.0f, 4.0f);
     Shader *vertexShader = new Shader(AssetsLoader("light.vs").getPath());
     Shader *fragmentShader = new Shader(AssetsLoader("light.fs").getPath());

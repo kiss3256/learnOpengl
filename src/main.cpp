@@ -101,16 +101,19 @@ int main(int, char **)
     glm::vec3 lightPos = glm::vec3(4.0f, 4.0f, -4.0f);
     Shader *vertexShader = new Shader(AssetsLoader("light.vs").getPath());
     Shader *fragmentShader = new Shader(AssetsLoader("light.fs").getPath());
-    Program *program = new Program(vertexShader, fragmentShader);
-    light->setProgram(program);
-    light->setScale(0.2f);
-    light->setLocation(lightPos);
+    // Program *program = new Program(vertexShader, fragmentShader);
+    // light->setProgram(program);
+    // light->setScale(0.2f);
+    // light->setLocation(lightPos);
 
     // ----------------------------------------------------------------------
 
     glEnable(GL_DEPTH_TEST);
 
     Ground ground;
+
+    box->program->setUniform("material.diffuse", 0);
+    box->program->setUniform("material.specular", 1);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -124,16 +127,14 @@ int main(int, char **)
 
         ground.draw(mainCamera);
 
-        box->program->setUniform("material.diffuse", 0);
-        box->program->setUniform("material.specular", 1);
         box->program->setUniform("material.shininess", 64.0f);
 
-        box->program->setUniform("light.position", lightPos);
-        box->program->setUniform("light.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
-        box->program->setUniform("light.diffuse", glm::vec3(0.2f, 0.2f, 0.2f));
-        box->program->setUniform("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+        box->program->setUniform("dirLight.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
+        box->program->setUniform("dirLight.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
+        box->program->setUniform("dirLight.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+        box->program->setUniform("dirLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
 
-        light->render(mainCamera);
+        // light->render(mainCamera);
         box->program->setUniform("viewPos", mainCamera->cameraPos);
         box->render(mainCamera);
 

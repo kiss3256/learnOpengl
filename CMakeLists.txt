@@ -18,6 +18,9 @@ ELSE ()
     find_library(GLFW_LIB GLFW)
 ENDIF (CMAKE_SYSTEM_NAME MATCHES "Windows")
 
+add_subdirectory("assimp-5.0.1")
+target_link_libraries(LearnGL assimp)
+
 target_link_libraries(LearnGL ${GLFW_LIB})
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})

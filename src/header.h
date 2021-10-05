@@ -6,7 +6,6 @@
 #include <string>
 #include <sstream>
 #include <vector>
-#include <initializer_list>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -28,7 +27,10 @@
 #include "Actor.hpp"
 #include "Camera.hpp"
 #include "Cube.hpp"
+#include "Mesh.hpp"
+#include "Model.hpp"
 #include "Ground.hpp"
 #include "ObjectManager.hpp"
+#include "stb_image.h"
 
 #endif

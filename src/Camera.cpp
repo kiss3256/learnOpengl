@@ -36,7 +36,8 @@ void Camera::processInput()
     deltaTime = currentFrame - lastFrame;
     lastFrame = currentFrame;
 
-    float cameraSpeed = 2.5f * deltaTime;
+    float sensitivity = glm::length(cameraPos);
+    float cameraSpeed = sensitivity * deltaTime;
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         cameraPos += cameraSpeed * cameraFront;
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)

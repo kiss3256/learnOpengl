@@ -1,8 +1,5 @@
 #include "Cube.hpp"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-
 float vertices[] = {
     // positions          // normals         // texture coords
     -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,

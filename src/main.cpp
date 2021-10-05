@@ -11,6 +11,7 @@ void mouse_callback(GLFWwindow *window, double xpos, double ypos);
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
 void calcFPS(GLFWwindow *window);
 void drawGround();
+void loadCameraStatus();
 
 int scrWidth = 800;
 int scrHeight = 600;
@@ -62,6 +63,123 @@ int main(int, char **)
 
     mainCamera = new Camera(window);
 
+    loadCameraStatus();
+
+    glm::vec3 lightPos = glm::vec3(4.0f, 4.0f, -4.0f);
+    Shader *vertexShader = new Shader(AssetsLoader("model.vs").getPath());
+    Shader *fragmentShader = new Shader(AssetsLoader("model.fs").getPath());
+    Program *program = new Program(vertexShader, fragmentShader);
+
+    // ----------------------------------------------------------------------
+
+    glEnable(GL_DEPTH_TEST);
+
+    Ground ground;
+
+    Model lusth("../assets/monkey-head.obj");
+
+    while (!glfwWindowShouldClose(window))
+    {
+
+        glfwPollEvents();
+        calcFPS(window);
+        mainCamera->processInput();
+
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        ground.draw(mainCamera);
+
+        program->setUniform("model", glm::value_ptr(glm::mat4(1)));
+        program->setUniform("view", glm::value_ptr(mainCamera->getViewMatrix()));
+        program->setUniform("projection", glm::value_ptr(mainCamera->getProjectionMatrix()));
+        lusth.Draw(*program);
+
+        glfwSwapBuffers(window);
+    }
+
+    glfwTerminate();
+
+    return 0;
+}
+
+void mouse_callback(GLFWwindow *window, double xpos, double ypos)
+{
+    if (firstMouse)
+    {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+
+    float xoffset = (float)(xpos - lastX);
+    float yoffset = (float)(lastY - ypos);
+    lastX = xpos;
+    lastY = ypos;
+
+    float sensitivity = 0.05f;
+    xoffset *= sensitivity;
+    yoffset *= sensitivity;
+
+    yaw += xoffset;
+    pitch += yoffset;
+
+    if (yaw > 360.0f)
+        yaw -= 360.0f;
+    if (yaw < -360.0f)
+        yaw += 360.0f;
+
+    if (pitch > 89.0f)
+        pitch = 89.0f;
+    if (pitch < -89.0f)
+        pitch = -89.0f;
+
+    glm::vec3 front;
+    front.x = (float)sin(glm::radians(yaw)) * (float)cos(glm::radians(pitch));
+    front.y = (float)sin(glm::radians(pitch));
+    front.z = -(float)cos(glm::radians(yaw)) * (float)cos(glm::radians(pitch));
+    mainCamera->cameraFront = glm::normalize(front);
+}
+
+void scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
+{
+    float sensitivity = 0.05f;
+    glm::vec4 pos(mainCamera->cameraPos, 0.0f);
+    glm::vec4 front(mainCamera->cameraFront, 0.0f);
+    glm::mat4 mat(1.0f);
+    float yawRadians = (float)xoffset * sensitivity;
+    float pitchRadians = (float)yoffset * sensitivity;
+    mat = glm::rotate(mat, yawRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+    mainCamera->cameraPos = pos * mat;
+    mainCamera->cameraFront = glm::normalize(front * mat);
+    yaw += glm::degrees(yawRadians);
+}
+
+void mouse_button_callback(GLFWwindow *window, int button, int action, int mods)
+{
+    std::cout << "mouse_button_callback" << std::endl;
+}
+
+void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
+{
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    {
+        glfwSetWindowShouldClose(window, GLFW_TRUE);
+        std::ofstream out("data.txt");
+        glm::vec3 pos = (mainCamera->cameraPos);
+        glm::vec3 front = (mainCamera->cameraFront);
+        glm::vec3 up = (mainCamera->cameraUp);
+        // fprintf(stdout, "%f,%f,%f\n", pos.x, pos.y, pos.z);
+        out << pos.x << "," << pos.y << "," << pos.z << ","
+            << front.x << "," << front.y << "," << front.z << ","
+            << up.x << "," << up.y << "," << up.z << ","
+            << lastX << "," << lastY << "," << yaw << "," << pitch;
+        out.close();
+    }
+}
+
+void loadCameraStatus()
+{
     std::ifstream in("data.txt", std::ios::in);
     if (in.is_open())
     {
@@ -94,115 +212,6 @@ int main(int, char **)
         // lastY = std::stof(tokens[10]);
         yaw = (double)std::stof(tokens[11]);
         pitch = (double)std::stof(tokens[12]);
-    }
-
-    Cube *box = new Cube("container2.png", "container2_specular.png");
-    Cube *light = new Cube(nullptr, nullptr);
-    glm::vec3 lightPos = glm::vec3(4.0f, 4.0f, -4.0f);
-    Shader *vertexShader = new Shader(AssetsLoader("light.vs").getPath());
-    Shader *fragmentShader = new Shader(AssetsLoader("light.fs").getPath());
-    // Program *program = new Program(vertexShader, fragmentShader);
-    // light->setProgram(program);
-    // light->setScale(0.2f);
-    // light->setLocation(lightPos);
-
-    // ----------------------------------------------------------------------
-
-    glEnable(GL_DEPTH_TEST);
-
-    Ground ground;
-
-    box->program->setUniform("material.diffuse", 0);
-    box->program->setUniform("material.specular", 1);
-
-    while (!glfwWindowShouldClose(window))
-    {
-
-        glfwPollEvents();
-        calcFPS(window);
-        mainCamera->processInput();
-
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        ground.draw(mainCamera);
-
-        box->program->setUniform("material.shininess", 64.0f);
-
-        box->program->setUniform("dirLight.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
-        box->program->setUniform("dirLight.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
-        box->program->setUniform("dirLight.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
-        box->program->setUniform("dirLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
-
-        // light->render(mainCamera);
-        box->program->setUniform("viewPos", mainCamera->cameraPos);
-        box->render(mainCamera);
-
-        glfwSwapBuffers(window);
-    }
-
-    glfwTerminate();
-
-    return 0;
-}
-
-void mouse_callback(GLFWwindow *window, double xpos, double ypos)
-{
-    if (firstMouse)
-    {
-        lastX = xpos;
-        lastY = ypos;
-        firstMouse = false;
-    }
-
-    float xoffset = (float)(xpos - lastX);
-    float yoffset = (float)(lastY - ypos);
-    lastX = xpos;
-    lastY = ypos;
-
-    float sensitivity = 0.05f;
-    xoffset *= sensitivity;
-    yoffset *= sensitivity;
-
-    yaw += xoffset;
-    pitch += yoffset;
-
-    if (pitch > 89.0f)
-        pitch = 89.0f;
-    if (pitch < -89.0f)
-        pitch = -89.0f;
-
-    glm::vec3 front;
-    front.x = (float)sin(glm::radians(yaw));
-    front.y = (float)sin(glm::radians(pitch));
-    front.z = -(float)cos(glm::radians(yaw)) * (float)cos(glm::radians(pitch));
-    mainCamera->cameraFront = glm::normalize(front);
-    // fprintf(stdout, "front::(%f, %f, %f)\n", front.x, front.y, front.z);
-}
-
-void scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
-{
-}
-
-void mouse_button_callback(GLFWwindow *window, int button, int action, int mods)
-{
-}
-
-void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
-{
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-    {
-        glfwSetWindowShouldClose(window, GLFW_TRUE);
-        std::ofstream out("data.txt");
-        glm::vec3 pos = (mainCamera->cameraPos);
-        glm::vec3 front = (mainCamera->cameraFront);
-        glm::vec3 up = (mainCamera->cameraUp);
-        // fprintf(stdout, "%f,%f,%f\n", pos.x, pos.y, pos.z);
-        out << pos.x << "," << pos.y << "," << pos.z << ","
-            << front.x << "," << front.y << "," << front.z << ","
-            << up.x << "," << up.y << "," << up.z << ","
-            << lastX << "," << lastY << "," << yaw << "," << pitch;
-        out.close();
     }
 }
 

@@ -4,7 +4,6 @@ in vec3 Normal;
 in vec3 FragPos;
 in vec2 TexCoords;
 
-uniform vec3 objectColor;
 uniform vec3 viewPos;
 
 out vec4 FragColor;
@@ -56,20 +55,21 @@ void main() {
     // 第三阶段：聚光
     //result += CalcSpotLight(spotLight, norm, FragPos, viewDir);
 
-    FragColor = vec4(0.4, 0.3, 0.2, 1.0);
+    FragColor = vec4(result, 1.0);
 
 }
 
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir) {
-    vec3 lightDir = normalize(-light.direction);
+    vec3 objectColor = vec3(0.4);
+    vec3 lightDir = normalize(vec3(1.0, 1.0, 1.0));
     // 漫反射着色
     float diff = max(dot(normal, lightDir), 0.0);
     // 镜面光着色
     vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
     // 合并结果
-    vec3 ambient = vec3(texture(material.diffuse, TexCoords));
-    vec3 diffuse = diff * vec3(texture(material.diffuse, TexCoords));
-    vec3 specular = spec * vec3(texture(material.specular, TexCoords));
-    return ambient;
+    vec3 ambient = 0.5 * objectColor;
+    vec3 diffuse = diff * objectColor;
+    vec3 specular = spec * objectColor;
+    return ambient + diffuse + specular;
 }

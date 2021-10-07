@@ -1,10 +1,12 @@
 #include "Program.hpp"
 
-Program::Program(Shader *vertexShader, Shader *fragmentShader)
+Program::Program(const char *vs, const char *fs)
 {
+    Shader vertexShader(AssetsLoader(vs).getPath());
+    Shader fragmentShader(AssetsLoader(fs).getPath());
     program = glCreateProgram();
-    glAttachShader(program, vertexShader->shader);
-    glAttachShader(program, fragmentShader->shader);
+    glAttachShader(program, vertexShader.shader);
+    glAttachShader(program, fragmentShader.shader);
     glLinkProgram(program);
 
     GLint success;
@@ -15,12 +17,17 @@ Program::Program(Shader *vertexShader, Shader *fragmentShader)
         glGetProgramInfoLog(program, 512, nullptr, infoLog);
         std::cout << "ERROR::LINK_PROGRAM::" << infoLog << std::endl;
     }
+
+    glDetachShader(program, vertexShader.shader);
+    glDetachShader(program, fragmentShader.shader);
+
+    std::cout << "LOG::Program created.\n";
 }
 
 Program::~Program()
 {
-    std::cout << "LOG::Program deleted.\n";
     glDeleteProgram(program);
+    std::cout << "LOG::Program deleted.\n";
 }
 
 void Program::use() { glUseProgram(program); }

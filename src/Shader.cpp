@@ -26,7 +26,6 @@ Shader::Shader(string filename)
     file_contents = readFileIntoString(filename);
     const char *shaderSource = file_contents.c_str();
 
-    GLenum type;
     size_t found;
     found = filename.find(".vs");
     if (found != string::npos)
@@ -51,4 +50,8 @@ Shader::Shader(string filename)
     }
 }
 
-Shader::~Shader() { glDeleteShader(shader); }
+Shader::~Shader()
+{
+    glDeleteShader(shader);
+    std::cout << "LOG::" << type << "::Shader deleted.\n";
+}

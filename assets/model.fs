@@ -60,7 +60,7 @@ void main() {
 }
 
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir) {
-    vec3 objectColor = vec3(0.4);
+    vec3 objectColor = vec3(0.57, 0.71, 0.78);
     vec3 lightDir = normalize(vec3(1.0, 1.0, 1.0));
     // 漫反射着色
     float diff = max(dot(normal, lightDir), 0.0);

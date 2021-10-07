@@ -10,7 +10,7 @@ private:
 	GLuint program;
 
 public:
-	Program(Shader *vertexShader, Shader *fragmentShader);
+	Program(const char *vs, const char *fs);
 	~Program();
 
 	void use();

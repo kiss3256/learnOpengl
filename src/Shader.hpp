@@ -11,5 +11,8 @@ public:
     ~Shader();
 
     GLuint shader;
+
+private:
+    GLenum type;
 };
 #endif

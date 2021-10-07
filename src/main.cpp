@@ -1,4 +1,6 @@
 #include "header.h"
+#include <thread>
+#include <sys/stat.h>
 
 void error_callback(int error, const char *description)
 {
@@ -29,7 +31,6 @@ const std::string winTitle("LearnOpenGL");
 
 int main(int, char **)
 {
-
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
@@ -65,22 +66,42 @@ int main(int, char **)
 
     loadCameraStatus();
 
-    glm::vec3 lightPos = glm::vec3(4.0f, 4.0f, -4.0f);
-    Shader *vertexShader = new Shader(AssetsLoader("model.vs").getPath());
-    Shader *fragmentShader = new Shader(AssetsLoader("model.fs").getPath());
-    Program *program = new Program(vertexShader, fragmentShader);
+    Ground ground;
+    Model monkey(AssetsLoader("monkey-head.obj").getPath().c_str());
+    Program *program = new Program("model.vs", "model.fs");
+
+    auto thread_function = [&]
+    {
+        long double lastModification;
+        while (true)
+        {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+
+            struct stat buf;
+            stat(AssetsLoader("model.fs").getPath().c_str(), &buf);
+            long double modification = buf.st_mtime;
+
+            if (lastModification != modification)
+            {
+                std::cout << "time of last data modification::" << std::to_string(modification) << std::endl;
+                lastModification = modification;
+
+                glfwMakeContextCurrent(window);
+                delete program;
+                program = new Program("model.vs", "model.fs");
+            }
+        }
+    };
+
+    std::thread t(thread_function);
+    t.detach();
 
     // ----------------------------------------------------------------------
 
     glEnable(GL_DEPTH_TEST);
 
-    Ground ground;
-
-    Model lusth("../assets/monkey-head.obj");
-
     while (!glfwWindowShouldClose(window))
     {
-
         glfwPollEvents();
         calcFPS(window);
         mainCamera->processInput();
@@ -93,7 +114,7 @@ int main(int, char **)
         program->setUniform("model", glm::value_ptr(glm::mat4(1)));
         program->setUniform("view", glm::value_ptr(mainCamera->getViewMatrix()));
         program->setUniform("projection", glm::value_ptr(mainCamera->getProjectionMatrix()));
-        lusth.Draw(*program);
+        monkey.Draw(*program);
 
         glfwSwapBuffers(window);
     }

@@ -88,9 +88,7 @@ Cube::Cube(const char *diffuse, const char *specular)
     if (specular)
         loadTexture(specular, &specularMap);
 
-    Shader *vertexShader = new Shader(AssetsLoader("cube.vs").getPath());
-    Shader *fragmentShader = new Shader(AssetsLoader("cube.fs").getPath());
-    program = new Program(vertexShader, fragmentShader);
+    program = new Program("cube.vs", "cube.fs");
 }
 
 Cube::~Cube()

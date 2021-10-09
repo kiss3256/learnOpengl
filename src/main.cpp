@@ -27,6 +27,8 @@ double lastX = 400, lastY = 300;
 bool firstMouse = true;
 double yaw = 0, pitch = 0;
 
+bool rightButtonDown = false;
+
 const std::string winTitle("LearnOpenGL");
 
 int main(int, char **)
@@ -48,7 +50,7 @@ int main(int, char **)
         return -1;
     }
     glfwMakeContextCurrent(window);
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    // glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     glfwSetErrorCallback(error_callback);
     glfwSetKeyCallback(window, key_callback);
@@ -69,13 +71,14 @@ int main(int, char **)
     Ground ground;
     Model monkey(AssetsLoader("monkey-head.obj").getPath().c_str());
     Program *program = new Program("model.vs", "model.fs");
+    bool reload = false;
 
     auto thread_function = [&]
     {
-        long double lastModification;
+        long double lastModification = 0;
         while (true)
         {
-            std::this_thread::sleep_for(std::chrono::seconds(1));
+            std::this_thread::sleep_for(std::chrono::microseconds(100));
 
             struct stat buf;
             stat(AssetsLoader("model.fs").getPath().c_str(), &buf);
@@ -86,9 +89,7 @@ int main(int, char **)
                 std::cout << "time of last data modification::" << std::to_string(modification) << std::endl;
                 lastModification = modification;
 
-                glfwMakeContextCurrent(window);
-                delete program;
-                program = new Program("model.vs", "model.fs");
+                reload = true;
             }
         }
     };
@@ -105,6 +106,15 @@ int main(int, char **)
         glfwPollEvents();
         calcFPS(window);
         mainCamera->processInput();
+
+        if (reload)
+        {
+            reload = false;
+
+            glfwMakeContextCurrent(window);
+            delete program;
+            program = new Program("model.vs", "model.fs");
+        }
 
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -126,6 +136,8 @@ int main(int, char **)
 
 void mouse_callback(GLFWwindow *window, double xpos, double ypos)
 {
+    if (!rightButtonDown)
+        return;
     if (firstMouse)
     {
         lastX = xpos;
@@ -178,7 +190,8 @@ void scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
 
 void mouse_button_callback(GLFWwindow *window, int button, int action, int mods)
 {
-    std::cout << "mouse_button_callback" << std::endl;
+    rightButtonDown = (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS);
+    firstMouse = (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS);
 }
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
